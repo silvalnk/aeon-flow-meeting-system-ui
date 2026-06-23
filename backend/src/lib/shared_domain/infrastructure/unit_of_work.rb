@@ -15,9 +15,8 @@ module SharedDomain
           yield t if block_given?
         rescue StandardError => e
           t.rollback!
-          raise Errors::InvalidTransactionError, "Transaction error: #{e.message}"
+          raise e
         end
-        yield if block_given?
       end
     end
   end

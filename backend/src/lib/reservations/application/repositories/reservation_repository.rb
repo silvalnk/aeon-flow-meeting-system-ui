@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-module Rooms
+module Reservations
   module Application
     module Repositories
-      class RoomRepository
+      class ReservationRepository
         def add(entity)
           raise NotImplementedError
         end
 
-        def find_all(filters = {})
+        def find_all(_room_id = nil, _filters = {})
           raise NotImplementedError
         end
 
-        def find_by_id(id)
+        def find_by_id(room_id, id)
           raise NotImplementedError
         end
 
@@ -20,7 +20,7 @@ module Rooms
           raise NotImplementedError
         end
 
-        def delete(id)
+        def has_overlapping?(room_id, start_time, end_time, exclude_id: nil)
           raise NotImplementedError
         end
       end

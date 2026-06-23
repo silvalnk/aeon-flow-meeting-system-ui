@@ -10,7 +10,7 @@ module Rooms
       class RoomMapper < SharedDomain::Infrastructure::Mapper
         def self.to_entity(dao)
           Domain::Entities::Room.new(
-            id: dao[:id].is_a?(String) ? SharedDomain::Domain::ValueObjects::UuidValueObject.new(value: dao[:id]) : dao[:id],
+            id: dao[:id].to_s,
             name: dao[:name],
             capacity: dao[:capacity],
             location: dao[:location]

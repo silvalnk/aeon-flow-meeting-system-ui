@@ -22,18 +22,36 @@ module Rooms
           )
         end
 
-        def find_all
-          @rom[:rooms].to_a.map { |room| to_dao(room) }
+        def find_all(filters = {})
+          relation = @rom[:rooms]
+          relation = relation.where(Sequel.like(:name, "%#{filters[:search]}%")) if filters[:search]
+
+          relation.to_a.map { |room| to_entity(room) }
+        end
+
+        def find_by_id(id)
+          room = @rom[:rooms].by_pk(id).one
+          return nil unless room
+
+          to_entity(room)
+        end
+
+        def update(entity)
+          @rom[:rooms].by_pk(entity.id.value).command(:update).call(
+            name: entity.name,
+            capacity: entity.capacity,
+            location: entity.location
+          )
+        end
+
+        def delete(id)
+          @rom[:rooms].by_pk(id).command(:delete).call
         end
 
         private
 
         def to_entity(dao)
           Mappers::RoomMapper.to_entity(dao)
-        end
-
-        def to_dao(entity)
-          Mappers::RoomMapper.to_dao(entity)
         end
       end
     end

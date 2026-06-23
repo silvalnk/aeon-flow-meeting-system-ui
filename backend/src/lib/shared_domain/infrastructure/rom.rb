@@ -32,6 +32,8 @@ module SharedDomain
       def setup_rom
         config = ROM::Configuration.new(:sql, @db)
         config.relation(:rooms) { schema(infer: true) }
+        config.relation(:reservations) { schema(infer: true) }
+        config.relation(:users) { schema(infer: true) }
         ROM.container(config)
       end
     end

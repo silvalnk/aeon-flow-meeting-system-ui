@@ -8,7 +8,7 @@ module Rooms
     module Validations
       class RoomValidation < SharedDomain::Domain::Validation
         params do
-          required(:name).filled(:string)
+          required(:name).filled(:string, max_size?: 100)
           required(:capacity).filled(:integer, gt?: 0)
           required(:location).filled(:string)
         end
