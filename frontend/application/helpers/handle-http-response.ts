@@ -1,0 +1,27 @@
+import { Either, Left, Right } from "../either.ts";
+import { AppError } from "../app-error.ts";
+import { HttpResponse, HttpStatusCode } from "../http-client.ts";
+
+const SUCCESS_CODES = [
+  HttpStatusCode.ok,
+  HttpStatusCode.noContent,
+  201,
+];
+
+export const handleHttpResponse = <T>(
+  response: HttpResponse,
+): Either<AppError, T> => {
+  if (SUCCESS_CODES.includes(response.statusCode)) {
+    return Right(response.body as T);
+  }
+
+  const body = response.body ?? {};
+  const message = body.error ?? body.message ??
+    (Array.isArray(body.errors) ? body.errors.join(", ") : "Request failed");
+
+  return Left({
+    message: String(message),
+    statusCode: response.statusCode,
+    errors: body.errors,
+  });
+};

@@ -52,5 +52,17 @@ RSpec.describe Rooms::Domain::Validations::RoomValidation do
         expect(sut.errors.to_h).to include(:location)
       end
     end
+
+    context 'when name exceeds 100 characters' do
+      it 'fails validation' do
+        sut = validator.call({
+          name: 'a' * 101,
+          capacity: 5,
+          location: 'Building 1'
+        })
+        expect(sut).to be_failure
+        expect(sut.errors.to_h).to include(:name)
+      end
+    end
   end
 end

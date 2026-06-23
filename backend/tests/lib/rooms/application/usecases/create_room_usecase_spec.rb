@@ -36,5 +36,18 @@ RSpec.describe Rooms::Application::UseCases::CreateRoomUseCase do
         expect(sut.value!.location).to eq('Room 4')
       end
     end
+
+    context 'with invalid input data' do
+      before do
+        allow(unit_of_work).to receive(:transaction).and_yield
+      end
+
+      it 'returns validation failure' do
+        result = use_case.call(name: '', capacity: 10, location: 'Room 4')
+
+        expect(result).to be_failure
+        expect(result.failure[:status]).to eq(:unprocessable_entity)
+      end
+    end
   end
 end
