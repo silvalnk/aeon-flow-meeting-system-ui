@@ -9,10 +9,18 @@ module App
 
       def call(env)
         status, headers, body = @app.call(env)
-        return [status, headers, body] if body.first.nil?
-
-        headers['Content-Type'] = 'application/json' unless headers['Content-Type']
+        headers['Content-Type'] = 'application/json' if json_response?(env, status, headers)
         [status, headers, body]
+      end
+
+      private
+
+      def json_response?(env, status, headers)
+        return false if env['REQUEST_METHOD'] == 'OPTIONS'
+        return false if status == 204
+        return false if headers['Content-Type']
+
+        true
       end
     end
   end

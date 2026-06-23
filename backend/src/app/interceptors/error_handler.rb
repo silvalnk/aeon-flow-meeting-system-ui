@@ -10,17 +10,22 @@ module App
       def call(env)
         @app.call(env)
       rescue Hanami::Middleware::BodyParser::BodyParsingError
-        [400, { 'Content-Type' => 'application/json' }, [
-          {
-            message: 'Invalid JSON format'
-          }.to_json
-        ]]
-      rescue StandardError
-        [500, { 'Content-Type' => 'application/json' }, [
-          {
-            message: 'Something went wrong'
-          }.to_json
-        ]]
+        error_response(400, message: 'Invalid JSON format')
+      rescue StandardError => e
+        warn "[ErrorHandler] #{e.class}: #{e.message}" if ENV['ENVIRONMENT'] == 'development'
+        error_response(500, message: 'Something went wrong')
+      end
+
+      private
+
+      def error_response(status, body)
+        headers = {
+          'Content-Type' => 'application/json',
+          'access-control-allow-origin' => '*',
+          'access-control-allow-headers' => '*',
+          'access-control-allow-methods' => '*'
+        }
+        [status, headers, [body.to_json]]
       end
     end
   end
