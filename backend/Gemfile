@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '3.2.1'
+ruby '>= 3.2.1'
 
 gem 'dry-auto_inject'
 gem 'dry-container'
@@ -22,6 +22,8 @@ gem 'sequel'
 gem 'sqlite3'
 gem 'swagger-blocks'
 gem 'uuid'
+gem 'bcrypt'
+gem 'jwt'
 
 group :development, :test do
   gem 'debug'
