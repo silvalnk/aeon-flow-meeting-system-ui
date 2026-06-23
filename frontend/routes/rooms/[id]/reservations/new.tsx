@@ -1,10 +1,10 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import Layout from "../../../../components/Layout.tsx";
-import Alert from "../../../../components/Alert.tsx";
-import { makeHttpCreateReservationUseCase, makeHttpGetRoomUseCase } from "../../../../main/factories/usecases/index.ts";
-import { isLeft } from "../../../../shared_domain/either.ts";
-import { getTokenFromRequest } from "../../../_middleware.ts";
-import { RoomEntity } from "../../../../domain/entities/index.ts";
+import Layout from "@components/Layout.tsx";
+import Alert from "@components/Alert.tsx";
+import { makeHttpCreateReservationUseCase, makeHttpGetRoomUseCase } from "@factories/usecases/index.ts";
+import { isLeft } from "@shared_domain/either.ts";
+import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
   room?: RoomEntity;

@@ -19,6 +19,11 @@
   },
   "exclude": ["**/_fresh/*"],
   "imports": {
+    "@components/": "./components/",
+    "@domain/": "./domain/",
+    "@shared_domain/": "./shared_domain/",
+    "@infrastructure/": "./infrastructure/",
+    "@factories/": "./factories/",
     "$fresh/": "https://deno.land/x/fresh@1.6.8/",
     "preact": "https://esm.sh/preact@10.19.6",
     "preact/": "https://esm.sh/preact@10.19.6/",
@@ -34,5 +39,5 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "nodeModulesDir": true
+  "nodeModulesDir": "auto"
 }

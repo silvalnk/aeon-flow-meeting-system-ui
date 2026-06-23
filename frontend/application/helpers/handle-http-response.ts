@@ -1,6 +1,6 @@
-import { Either, Left, Right } from "../either.ts";
-import { AppError } from "../app-error.ts";
-import { HttpResponse, HttpStatusCode } from "../http-client.ts";
+import { Either, Left, Right } from "@shared_domain/either.ts";
+import { AppError } from "@shared_domain/app-error.ts";
+import { HttpResponse, HttpStatusCode } from "@shared_domain/http-client.ts";
 
 const SUCCESS_CODES = [
   HttpStatusCode.ok,

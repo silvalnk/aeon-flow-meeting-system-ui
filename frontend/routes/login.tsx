@@ -1,9 +1,9 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import Layout from "../../components/Layout.tsx";
-import Alert from "../../components/Alert.tsx";
-import { makeHttpLoginUseCase } from "../../main/factories/usecases/index.ts";
-import { isLeft } from "../../shared_domain/either.ts";
-import { buildSetAuthCookie } from "../../infrastructure/auth/token-storage.ts";
+import Layout from "@components/Layout.tsx";
+import Alert from "@components/Alert.tsx";
+import { makeHttpLoginUseCase } from "@factories/usecases/index.ts";
+import { isLeft } from "@shared_domain/either.ts";
+import { buildSetAuthCookie } from "@infrastructure/auth/token-storage.ts";
 
 interface Data {
   error?: string;

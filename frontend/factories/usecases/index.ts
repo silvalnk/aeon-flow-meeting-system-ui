@@ -6,7 +6,7 @@ import {
   HttpCreateRoomUseCase,
   HttpUpdateRoomUseCase,
   HttpDeleteRoomUseCase,
-} from "../../../application/usecases/http-room-usecases.ts";
+} from "../../application/usecases/http-room-usecases.ts";
 import {
   HttpLoginUseCase,
   HttpListReservationsUseCase,
@@ -14,7 +14,7 @@ import {
   HttpCreateReservationUseCase,
   HttpUpdateReservationUseCase,
   HttpCancelReservationUseCase,
-} from "../../../application/usecases/http-reservation-usecases.ts";
+} from "../../application/usecases/http-reservation-usecases.ts";
 
 const httpClient = makeAxiosHttpClient();
 

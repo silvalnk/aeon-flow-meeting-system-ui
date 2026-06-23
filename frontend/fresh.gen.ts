@@ -4,17 +4,16 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
-import * as $rooms_id_ from "./routes/rooms/[id]/index.tsx";
 import * as $rooms_id_edit from "./routes/rooms/[id]/edit.tsx";
+import * as $rooms_id_index from "./routes/rooms/[id]/index.tsx";
+import * as $rooms_id_reservations_reservationId_edit from "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx";
+import * as $rooms_id_reservations_reservationId_index from "./routes/rooms/[id]/reservations/[reservationId]/index.tsx";
 import * as $rooms_id_reservations_index from "./routes/rooms/[id]/reservations/index.tsx";
 import * as $rooms_id_reservations_new from "./routes/rooms/[id]/reservations/new.tsx";
-import * as $rooms_id_reservations_reservationId_ from "./routes/rooms/[id]/reservations/[reservationId]/index.tsx";
-import * as $rooms_id_reservations_reservationId_edit from "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx";
 import * as $rooms_index from "./routes/rooms/index.tsx";
 import * as $rooms_new from "./routes/rooms/new.tsx";
 
@@ -24,17 +23,18 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/_middleware.ts": $_middleware,
     "./routes/api/joke.ts": $api_joke,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
-    "./routes/rooms/[id]/index.tsx": $rooms_id_,
     "./routes/rooms/[id]/edit.tsx": $rooms_id_edit,
+    "./routes/rooms/[id]/index.tsx": $rooms_id_index,
+    "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx":
+      $rooms_id_reservations_reservationId_edit,
+    "./routes/rooms/[id]/reservations/[reservationId]/index.tsx":
+      $rooms_id_reservations_reservationId_index,
     "./routes/rooms/[id]/reservations/index.tsx": $rooms_id_reservations_index,
     "./routes/rooms/[id]/reservations/new.tsx": $rooms_id_reservations_new,
-    "./routes/rooms/[id]/reservations/[reservationId]/index.tsx": $rooms_id_reservations_reservationId_,
-    "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx": $rooms_id_reservations_reservationId_edit,
     "./routes/rooms/index.tsx": $rooms_index,
     "./routes/rooms/new.tsx": $rooms_new,
   },

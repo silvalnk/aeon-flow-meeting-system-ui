@@ -1,16 +1,16 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import Layout from "../../../../components/Layout.tsx";
-import Alert from "../../../../components/Alert.tsx";
-import StatusBadge from "../../../../components/StatusBadge.tsx";
-import { formatDateTime } from "../../../../shared_domain/formatters.ts";
+import Layout from "@components/Layout.tsx";
+import Alert from "@components/Alert.tsx";
+import StatusBadge from "@components/StatusBadge.tsx";
+import { formatDateTime } from "@shared_domain/formatters.ts";
 import {
   makeHttpCancelReservationUseCase,
   makeHttpGetReservationUseCase,
   makeHttpGetRoomUseCase,
-} from "../../../../main/factories/usecases/index.ts";
-import { isLeft } from "../../../../shared_domain/either.ts";
-import { getTokenFromRequest } from "../../../_middleware.ts";
-import { ReservationEntity, RoomEntity } from "../../../../domain/entities/index.ts";
+} from "@factories/usecases/index.ts";
+import { isLeft } from "@shared_domain/either.ts";
+import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { ReservationEntity, RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
   room?: RoomEntity;

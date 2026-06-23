@@ -156,7 +156,7 @@ O projeto segue **Clean Architecture** com **DDD** (bounded contexts):
 | Use Cases | `application/use_cases/` | `domain/usecases/` + `application/usecases/` |
 | Entities | `domain/entities/` | `domain/entities/` |
 | Repositories | `application/repositories/` + `infrastructure/` | Adapters HTTP (`HttpClient`) |
-| DI / Factory | `dry-container` (`AppContainer`) | `main/factories/` |
+| DI / Factory | `dry-container` (`AppContainer`) | `factories/` |
 | Result type | `dry-monads` (Success/Failure) | `Either` (Left/Right) |
 | Unit of Work | `SharedDomain::Infrastructure::UnitOfWork` | — |
 | Auth | JWT middleware + BCrypt | Cookie HttpOnly + Bearer header |

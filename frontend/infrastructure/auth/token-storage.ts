@@ -6,6 +6,14 @@ export const getAuthToken = (cookieHeader: string | null): string | null => {
   return match ? decodeURIComponent(match[1]) : null;
 };
 
+export const getTokenFromRequest = (request: Request): string | null => {
+  return getAuthToken(request.headers.get("cookie"));
+};
+
+export const requireAuth = (request: Request): string | null => {
+  return getTokenFromRequest(request);
+};
+
 export const buildAuthHeaders = (
   token: string | null,
 ): Record<string, string> => {
