@@ -1,128 +1,234 @@
-# Aplicação de Gestão de Reservas de Salas de Reunião
+# Aeon Flow — Gestão de Reservas de Salas de Reunião
 
-## Requisitos Funcionais
+Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas de reunião. O backend expõe uma API REST em Ruby (Hanami) e o frontend é uma SPA server-rendered em Deno/Fresh.
 
-1. **Criação de Salas de Reunião**
-   - O usuário deve ser capaz de criar novas salas de reunião com título, capacidade e localização.
+## Stack
 
-2. **Atualização de Salas de Reunião**
-   - O usuário deve ser capaz de atualizar as informações de uma sala de reunião existente.
+| Camada | Tecnologia |
+|--------|------------|
+| Backend | Ruby 3.3+, Hanami::API, ROM-SQL, SQLite |
+| Frontend | Deno, Fresh, Preact, Tailwind CSS |
+| Auth | JWT (HS256) + BCrypt |
+| Docs | Swagger OpenAPI 3.0 em `/docs` |
 
-3. **Visualização de Salas de Reunião**
-   - O usuário deve visualizar uma lista de todas as salas de reunião e detalhes de uma sala específica.
+## Como Executar
 
-4. **Criação de Reservas**
-   - O usuário deve ser capaz de reservar uma sala de reunião para uma data e hora específica, com a possibilidade de adicionar uma descrição e um responsável.
+### Pré-requisitos
 
-5. **Atualização de Reservas**
-   - O usuário deve ser capaz de atualizar as informações de uma reserva existente.
+- Ruby **3.3.0** (recomendado via `asdf`; evite Ruby 3.4 dev — incompatível com `sqlite3`)
+- Bundler
+- Deno
 
-6. **Visualização de Reservas**
-   - O usuário deve visualizar todas as reservas para uma sala de reunião e detalhes de cada reserva.
+### Backend
 
-7. **Exclusão de Reservas**
-   - O usuário deve ser capaz de cancelar reservas existentes.
+```bash
+cd backend
+asdf local ruby 3.3.0   # opcional, mas recomendado
+bundle install
+ENVIRONMENT=development bundle exec rake db:migrate
+ENVIRONMENT=development bundle exec rake db:seed
+bin/dev
+```
 
-8. **Filtragem e Busca**
-   - O usuário deve poder filtrar reservas por sala, data e status (confirmada, pendente, cancelada).
-   - O usuário deve poder buscar reservas e salas pelo nome.
+- API: `http://localhost:9292`
+- Swagger UI: `http://localhost:9292/docs`
+- OpenAPI JSON: `http://localhost:9292/api-docs/swagger.json`
 
-## Requisitos Não Funcionais
+**Credenciais padrão (seed):** `admin@aeonflow.com` / `admin123`
 
-1. **Performance**
-   - A aplicação deve responder a consultas e buscas em menos de 2 segundos.
+### Frontend
 
-2. **Escalabilidade**
-   - A aplicação deve ser capaz de escalar horizontalmente para suportar um aumento no número de salas e reservas.
+```bash
+cd frontend
+API_URL=http://localhost:9292/api/v1 deno task start
+```
 
-3. **Segurança**
-   - Dados das reservas e salas devem ser protegidos contra acesso não autorizado.
-   - Autenticação e autorização devem ser implementadas para garantir que apenas usuários autorizados possam criar, atualizar ou cancelar reservas.
+Acesse `http://localhost:8000`. Faça login em `/login` para operações de escrita.
 
-4. **Usabilidade**
-   - A interface do usuário deve ser intuitiva e responsiva para dispositivos móveis e desktop.
+## Autenticação
 
-5. **Manutenibilidade**
-   - O código deve ser modular e seguir princípios de Clean Code para facilitar a manutenção e extensibilidade.
+| Tipo de rota | Autenticação |
+|--------------|--------------|
+| `GET /api/v1/rooms` e sub-recursos de leitura | Pública |
+| `POST /api/v1/auth/login` | Pública |
+| `POST`, `PUT`, `DELETE` | Requer `Authorization: Bearer <token>` |
 
-## Regras de Negócio
+```bash
+# Obter token
+curl -X POST http://localhost:9292/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@aeonflow.com","password":"admin123"}'
 
-1. **Disponibilidade da Sala**
-   - Uma sala de reunião não pode ser reservada para mais de um evento ao mesmo tempo.
-
-2. **Validação de Dados**
-   - O nome da sala deve ter entre 1 e 100 caracteres.
-   - A capacidade da sala deve ser um número positivo.
-   - A data e hora da reserva devem estar no futuro.
-
-3. **Cancelamento de Reserva**
-   - Reservas podem ser canceladas com pelo menos 24 horas de antecedência.
-
-## Estrutura das Tabelas do Banco de Dados
-
-### Tabela `rooms`
-
-| Coluna       | Tipo          | Descrição                                     |
-|--------------|---------------|-----------------------------------------------|
-| `id`         | INT           | Identificador único da sala (chave primária)  |
-| `name`       | VARCHAR(100)  | Nome da sala                                 |
-| `capacity`   | INT           | Capacidade da sala                           |
-| `location`   | VARCHAR(255)  | Localização da sala                          |
-
-### Tabela `reservations`
-
-| Coluna         | Tipo                                      | Descrição                                     |
-|----------------|-------------------------------------------|-----------------------------------------------|
-| `id`           | INT                                       | Identificador único da reserva (chave primária) |
-| `room_id`      | INT                                       | Identificador da sala (chave estrangeira)    |
-| `start_time`   | DATETIME                                  | Data e hora de início da reserva              |
-| `end_time`     | DATETIME                                  | Data e hora de término da reserva             |
-| `description`  | TEXT                                      | Descrição da reserva                         |
-| `responsible`  | VARCHAR(100)                              | Nome do responsável pela reserva              |
-| `status`       | ENUM('confirmed', 'pending', 'cancelled') | Status da reserva                            |
+# Usar token
+curl -X POST http://localhost:9292/api/v1/rooms \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{"name":"Sala Gamma","capacity":15,"location":"Andar 3"}'
+```
 
 ## Endpoints da API
 
-### Salas de Reunião
+Base URL: `/api/v1`
 
-- **GET /rooms**
-  - **Descrição:** Lista todas as salas de reunião.
-  - **Parâmetros:** Nenhum
+### Autenticação
 
-- **POST /rooms**
-  - **Descrição:** Cria uma nova sala de reunião.
-  - **Parâmetros:** `name`, `capacity`, `location`
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/auth/login` | Autentica e retorna `{ token, user }` |
 
-- **GET /rooms/{id}**
-  - **Descrição:** Obtém detalhes de uma sala de reunião específica.
-  - **Parâmetros:** Nenhum
+### Salas
 
-- **PUT /rooms/{id}**
-  - **Descrição:** Atualiza uma sala de reunião existente.
-  - **Parâmetros:** `name`, `capacity`, `location`
-
-- **DELETE /rooms/{id}**
-  - **Descrição:** Exclui uma sala de reunião específica.
-  - **Parâmetros:** Nenhum
+| Método | Rota | Auth | Descrição |
+|--------|------|------|-----------|
+| `GET` | `/rooms` | — | Lista salas. Query: `?search=nome` |
+| `POST` | `/rooms` | JWT | Cria sala (`name`, `capacity`, `location`) |
+| `GET` | `/rooms/{id}` | — | Detalhes de uma sala |
+| `PUT` | `/rooms/{id}` | JWT | Atualiza sala |
+| `DELETE` | `/rooms/{id}` | JWT | Exclui sala (cascade nas reservas) |
 
 ### Reservas
 
-- **GET /rooms/{room_id}/reservations**
-  - **Descrição:** Lista todas as reservas para uma sala de reunião específica.
-  - **Parâmetros:** `status`, `start_time`, `end_time`
+| Método | Rota | Auth | Descrição |
+|--------|------|------|-----------|
+| `GET` | `/rooms/{room_id}/reservations` | — | Lista reservas. Query: `status`, `start_time`, `end_time`, `search` |
+| `POST` | `/rooms/{room_id}/reservations` | JWT | Cria reserva |
+| `GET` | `/rooms/{room_id}/reservations/{id}` | — | Detalhes de uma reserva |
+| `PUT` | `/rooms/{room_id}/reservations/{id}` | JWT | Atualiza reserva |
+| `DELETE` | `/rooms/{room_id}/reservations/{id}` | JWT | Cancela reserva (soft delete → `cancelled`) |
 
-- **POST /rooms/{room_id}/reservations**
-  - **Descrição:** Cria uma nova reserva para uma sala de reunião.
-  - **Parâmetros:** `start_time`, `end_time`, `description`, `responsible`
+### Códigos de resposta relevantes
 
-- **GET /rooms/{room_id}/reservations/{id}**
-  - **Descrição:** Obtém detalhes de uma reserva específica.
-  - **Parâmetros:** Nenhum
+| Código | Situação |
+|--------|----------|
+| `201` | Recurso criado |
+| `204` | Exclusão/cancelamento bem-sucedido |
+| `401` | Token ausente ou inválido |
+| `404` | Recurso não encontrado |
+| `409` | Conflito de horário (sala indisponível) |
+| `422` | Erro de validação ou regra de negócio |
 
-- **PUT /rooms/{room_id}/reservations/{id}**
-  - **Descrição:** Atualiza uma reserva existente.
-  - **Parâmetros:** `start_time`, `end_time`, `description`, `responsible`, `status`
+## Regras de Negócio
 
-- **DELETE /rooms/{room_id}/reservations/{id}**
-  - **Descrição:** Cancela uma reserva específica.
-  - **Parâmetros:** Nenhum
+1. **Disponibilidade** — Uma sala não pode ter duas reservas ativas (não canceladas) no mesmo intervalo de tempo.
+2. **Validação de salas** — Nome entre 1 e 100 caracteres; capacidade deve ser um inteiro positivo.
+3. **Reservas no futuro** — Na criação, `start_time` deve ser posterior ao momento atual.
+4. **Intervalo válido** — `end_time` deve ser posterior a `start_time`.
+5. **Cancelamento** — Só é permitido com pelo menos 24 horas de antecedência em relação ao `start_time`.
+
+## Banco de Dados (SQLite)
+
+### Tabela `rooms`
+
+| Coluna | Tipo | Descrição |
+|--------|------|-----------|
+| `id` | VARCHAR (UUID) | Chave primária |
+| `name` | VARCHAR | Nome da sala |
+| `capacity` | INTEGER | Capacidade |
+| `location` | VARCHAR | Localização |
+
+### Tabela `reservations`
+
+| Coluna | Tipo | Descrição |
+|--------|------|-----------|
+| `id` | VARCHAR (UUID) | Chave primária |
+| `room_id` | VARCHAR (UUID) | FK → `rooms.id` (cascade) |
+| `start_time` | DATETIME | Início da reserva |
+| `end_time` | DATETIME | Término da reserva |
+| `description` | TEXT | Descrição opcional |
+| `responsible` | VARCHAR(100) | Responsável |
+| `status` | VARCHAR | `confirmed`, `pending` ou `cancelled` |
+
+### Tabela `users`
+
+| Coluna | Tipo | Descrição |
+|--------|------|-----------|
+| `id` | VARCHAR (UUID) | Chave primária |
+| `email` | VARCHAR | E-mail único |
+| `password_digest` | VARCHAR | Hash BCrypt |
+| `name` | VARCHAR | Nome do usuário |
+
+## Arquitetura
+
+O projeto segue **Clean Architecture** com **DDD** (bounded contexts):
+
+| Padrão | Backend (Ruby) | Frontend (Deno/Fresh) |
+|--------|----------------|------------------------|
+| Use Cases | `application/use_cases/` | `domain/usecases/` + `application/usecases/` |
+| Entities | `domain/entities/` | `domain/entities/` |
+| Repositories | `application/repositories/` + `infrastructure/` | Adapters HTTP (`HttpClient`) |
+| DI / Factory | `dry-container` (`AppContainer`) | `main/factories/` |
+| Result type | `dry-monads` (Success/Failure) | `Either` (Left/Right) |
+| Unit of Work | `SharedDomain::Infrastructure::UnitOfWork` | — |
+| Auth | JWT middleware + BCrypt | Cookie HttpOnly + Bearer header |
+| Resilience | Transações + rollback | Retry com backoff no Axios |
+
+### Bounded Contexts (Backend)
+
+```
+src/lib/
+├── shared_domain/   # kernel: Entity, Validation, ROM, UnitOfWork
+├── rooms/           # CRUD de salas
+├── reservations/    # CRUD de reservas + regras de negócio
+└── auth/            # autenticação JWT
+```
+
+### Rotas do Frontend
+
+| Rota | Descrição |
+|------|-----------|
+| `/` | Redireciona para `/rooms` |
+| `/login` | Autenticação |
+| `/rooms` | Listagem e busca de salas |
+| `/rooms/new` | Criar sala |
+| `/rooms/[id]` | Detalhes e exclusão |
+| `/rooms/[id]/edit` | Editar sala |
+| `/rooms/[id]/reservations` | Listagem com filtros |
+| `/rooms/[id]/reservations/new` | Nova reserva |
+| `/rooms/[id]/reservations/[reservationId]` | Detalhes e cancelamento |
+| `/rooms/[id]/reservations/[reservationId]/edit` | Editar reserva |
+
+## Requisitos Funcionais
+
+| # | Requisito | Status |
+|---|-----------|--------|
+| 1 | Criação de salas | Implementado |
+| 2 | Atualização de salas | Implementado |
+| 3 | Visualização de salas | Implementado |
+| 4 | Criação de reservas | Implementado |
+| 5 | Atualização de reservas | Implementado |
+| 6 | Visualização de reservas | Implementado |
+| 7 | Cancelamento de reservas | Implementado |
+| 8 | Filtragem e busca | Implementado |
+
+## Requisitos Não Funcionais
+
+| # | Requisito | Como é atendido |
+|---|-----------|-----------------|
+| 1 | Performance (< 2s) | SQLite local + queries indexadas |
+| 2 | Escalabilidade | Arquitetura stateless; API pode escalar horizontalmente |
+| 3 | Segurança | JWT + BCrypt; middleware de auth nas mutações |
+| 4 | Usabilidade | UI responsiva com Tailwind; navegação clara |
+| 5 | Manutenibilidade | Clean Architecture, bounded contexts, testes unitários |
+
+## Testes
+
+```bash
+cd backend
+ENVIRONMENT=test bundle exec rspec
+```
+
+## Variáveis de Ambiente
+
+### Backend (`backend/.env.dev`)
+
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `PORT` | `9292` | Porta do servidor |
+| `ENVIRONMENT` | `development` | Ambiente (`development` / `test`) |
+| `JWT_SECRET` | — | Chave secreta para assinatura JWT |
+
+### Frontend
+
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `API_URL` | `http://localhost:9292/api/v1` | URL base da API |
