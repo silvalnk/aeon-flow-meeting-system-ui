@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../lib/shared_domain/web/action'
+require_relative '../serializers/room_serializer'
 require_relative '../../lib/rooms/application/use_cases/create_room_use_case'
 
 module App
@@ -17,12 +18,7 @@ module App
           m.success do |room|
             {
               status: 201,
-              body: {
-                id: room.id.value,
-                name: room.name,
-                capacity: room.capacity,
-                location: room.location
-              }
+              body: App::Serializers::RoomSerializer.serialize(room)
             }
           end
 
