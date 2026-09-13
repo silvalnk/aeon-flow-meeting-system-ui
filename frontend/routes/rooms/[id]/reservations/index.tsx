@@ -8,6 +8,7 @@ import {
 } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { isAuthenticated } from "@infrastructure/auth/session.ts";
 import { ReservationEntity, RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
@@ -15,6 +16,7 @@ interface Data {
   reservations: ReservationEntity[];
   filters: { status?: string; search?: string };
   error?: string;
+  authenticated: boolean;
 }
 
 export const handler: Handlers<Data> = {
@@ -24,6 +26,7 @@ export const handler: Handlers<Data> = {
     const status = url.searchParams.get("status") ?? undefined;
     const search = url.searchParams.get("search") ?? undefined;
     const token = getTokenFromRequest(req);
+    const authenticated = isAuthenticated(req);
 
     const roomResult = await makeHttpGetRoomUseCase().execute({ id: roomId, token });
     const reservationsResult = await makeHttpListReservationsUseCase().execute({
@@ -34,7 +37,12 @@ export const handler: Handlers<Data> = {
     });
 
     if (isLeft(roomResult)) {
-      return ctx.render({ reservations: [], filters: { status, search }, error: roomResult.value.message });
+      return ctx.render({
+        reservations: [],
+        filters: { status, search },
+        error: roomResult.value.message,
+        authenticated,
+      });
     }
 
     if (isLeft(reservationsResult)) {
@@ -43,6 +51,7 @@ export const handler: Handlers<Data> = {
         reservations: [],
         filters: { status, search },
         error: reservationsResult.value.message,
+        authenticated,
       });
     }
 
@@ -50,21 +59,25 @@ export const handler: Handlers<Data> = {
       room: roomResult.value,
       reservations: reservationsResult.value,
       filters: { status, search },
+      authenticated,
     });
   },
 };
 
 export default function RoomReservationsPage({ data }: PageProps<Data>) {
   const room = data?.room;
+  const authenticated = data?.authenticated ?? false;
   return (
-    <Layout title={room ? `Reservas — ${room.name}` : "Reservas"}>
+    <Layout title={room ? `Reservas — ${room.name}` : "Reservas"} authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <>
           <div class="mb-4 flex flex-wrap gap-2">
-            <a href={`/rooms/${room.id}/reservations/new`} class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              Nova Reserva
-            </a>
+            {authenticated && (
+              <a href={`/rooms/${room.id}/reservations/new`} class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Nova Reserva
+              </a>
+            )}
             <a href={`/rooms/${room.id}`} class="px-4 py-2 border rounded hover:bg-slate-50">Voltar à Sala</a>
           </div>
           <form method="GET" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -103,7 +116,7 @@ export default function RoomReservationsPage({ data }: PageProps<Data>) {
                     </tr>
                   )
                   : data?.reservations.map((r) => (
-                    <ReservationRow key={r.id} reservation={r} roomId={room.id} />
+                    <ReservationRow key={r.id} reservation={r} roomId={room.id} canEdit={authenticated} />
                   ))}
               </tbody>
             </table>

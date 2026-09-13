@@ -5,11 +5,16 @@ import StatusBadge from "./StatusBadge.tsx";
 type ReservationRowProps = {
   reservation: ReservationEntity;
   roomId: string;
+  roomName?: string;
+  canEdit?: boolean;
 };
 
-export default function ReservationRow({ reservation, roomId }: ReservationRowProps) {
+export default function ReservationRow(
+  { reservation, roomId, roomName, canEdit = false }: ReservationRowProps,
+) {
   return (
     <tr class="border-b border-slate-100 hover:bg-slate-50">
+      {roomName && <td class="px-4 py-3">{roomName}</td>}
       <td class="px-4 py-3">{reservation.responsible}</td>
       <td class="px-4 py-3 text-sm">{formatDateTime(reservation.start_time)}</td>
       <td class="px-4 py-3 text-sm">{formatDateTime(reservation.end_time)}</td>
@@ -23,7 +28,7 @@ export default function ReservationRow({ reservation, roomId }: ReservationRowPr
           >
             Ver
           </a>
-          {reservation.status !== "cancelled" && (
+          {canEdit && reservation.status !== "cancelled" && (
             <a
               href={`/rooms/${roomId}/reservations/${reservation.id}/edit`}
               class="text-slate-600 hover:underline text-sm"

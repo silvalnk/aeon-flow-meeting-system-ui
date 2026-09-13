@@ -4,6 +4,7 @@ import Alert from "@components/Alert.tsx";
 import { makeHttpCreateReservationUseCase, makeHttpGetRoomUseCase } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { requireAuth, unauthorizedRedirect, redirectTo } from "@infrastructure/auth/session.ts";
 import { RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
@@ -13,6 +14,9 @@ interface Data {
 
 export const handler: Handlers<Data> = {
   async GET(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const { id: roomId } = ctx.params;
     const token = getTokenFromRequest(req);
     const result = await makeHttpGetRoomUseCase().execute({ id: roomId, token });
@@ -21,6 +25,9 @@ export const handler: Handlers<Data> = {
   },
 
   async POST(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const { id: roomId } = ctx.params;
     const form = await req.formData();
     const token = getTokenFromRequest(req);
@@ -35,6 +42,8 @@ export const handler: Handlers<Data> = {
     });
 
     if (isLeft(result)) {
+      const redirect = unauthorizedRedirect(req, result.value.statusCode);
+      if (redirect) return redirect;
       const roomResult = await makeHttpGetRoomUseCase().execute({ id: roomId, token });
       return ctx.render({
         room: isLeft(roomResult) ? undefined : roomResult.value,
@@ -42,17 +51,14 @@ export const handler: Handlers<Data> = {
       });
     }
 
-    return ctx.render(null, {
-      headers: { Location: `/rooms/${roomId}/reservations/${result.value.id}` },
-      status: 302,
-    });
+    return redirectTo(`/rooms/${roomId}/reservations/${result.value.id}`);
   },
 };
 
 export default function NewReservationPage({ data }: PageProps<Data>) {
   const room = data?.room;
   return (
-    <Layout title="Nova Reserva">
+    <Layout title="Nova Reserva" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">

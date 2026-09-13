@@ -177,7 +177,9 @@ src/lib/
 | Rota | Descrição |
 |------|-----------|
 | `/` | Redireciona para `/rooms` |
-| `/login` | Autenticação |
+| `/login` | Autenticação (volta para a página de origem) |
+| `/logout` | Encerra a sessão |
+| `/reservations` | Agenda global de reservas |
 | `/rooms` | Listagem e busca de salas |
 | `/rooms/new` | Criar sala |
 | `/rooms/[id]` | Detalhes e exclusão |

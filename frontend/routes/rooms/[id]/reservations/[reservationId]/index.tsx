@@ -10,35 +10,56 @@ import {
 } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import {
+  isAuthenticated,
+  requireAuth,
+  unauthorizedRedirect,
+  redirectTo,
+} from "@infrastructure/auth/session.ts";
 import { ReservationEntity, RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
   room?: RoomEntity;
   reservation?: ReservationEntity;
-  success?: string;
   error?: string;
+  authenticated: boolean;
 }
 
 export const handler: Handlers<Data> = {
   async GET(req, ctx) {
     const { id: roomId, reservationId } = ctx.params;
     const token = getTokenFromRequest(req);
+    const authenticated = isAuthenticated(req);
 
     const [roomResult, reservationResult] = await Promise.all([
       makeHttpGetRoomUseCase().execute({ id: roomId, token }),
       makeHttpGetReservationUseCase().execute({ roomId, id: reservationId, token }),
     ]);
 
-    if (isLeft(roomResult) || isLeft(reservationResult)) {
+    if (isLeft(roomResult)) {
       return ctx.render({
-        error: isLeft(roomResult) ? roomResult.value.message : reservationResult.value.message,
+        error: roomResult.value.message,
+        authenticated,
+      });
+    }
+    if (isLeft(reservationResult)) {
+      return ctx.render({
+        error: reservationResult.value.message,
+        authenticated,
       });
     }
 
-    return ctx.render({ room: roomResult.value, reservation: reservationResult.value });
+    return ctx.render({
+      room: roomResult.value,
+      reservation: reservationResult.value,
+      authenticated,
+    });
   },
 
   async POST(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const { id: roomId, reservationId } = ctx.params;
     const form = await req.formData();
     const token = getTokenFromRequest(req);
@@ -51,6 +72,8 @@ export const handler: Handlers<Data> = {
       });
 
       if (isLeft(result)) {
+        const redirect = unauthorizedRedirect(req, result.value.statusCode);
+        if (redirect) return redirect;
         const reservationResult = await makeHttpGetReservationUseCase().execute({
           roomId,
           id: reservationId,
@@ -61,23 +84,21 @@ export const handler: Handlers<Data> = {
           room: isLeft(roomResult) ? undefined : roomResult.value,
           reservation: isLeft(reservationResult) ? undefined : reservationResult.value,
           error: result.value.message,
+          authenticated: true,
         });
       }
 
-      return ctx.render(null, {
-        headers: { Location: `/rooms/${roomId}/reservations` },
-        status: 302,
-      });
+      return redirectTo(`/rooms/${roomId}/reservations`);
     }
 
-    return ctx.render({ error: "Método inválido" });
+    return ctx.render({ error: "Método inválido", authenticated: true });
   },
 };
 
 export default function ReservationDetailPage({ data }: PageProps<Data>) {
-  const { room, reservation } = data ?? {};
+  const { room, reservation, authenticated = false } = data ?? {};
   return (
-    <Layout title="Detalhes da Reserva">
+    <Layout title="Detalhes da Reserva" authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       {room && reservation && (
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 max-w-2xl">
@@ -88,7 +109,7 @@ export default function ReservationDetailPage({ data }: PageProps<Data>) {
           <p class="mb-2"><span class="font-medium">Fim:</span> {formatDateTime(reservation.end_time)}</p>
           <p class="mb-4"><span class="font-medium">Descrição:</span> {reservation.description || "—"}</p>
           <div class="flex flex-wrap gap-2">
-            {reservation.status !== "cancelled" && (
+            {authenticated && reservation.status !== "cancelled" && (
               <>
                 <a
                   href={`/rooms/${room.id}/reservations/${reservation.id}/edit`}

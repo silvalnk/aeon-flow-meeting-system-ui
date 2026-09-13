@@ -39,6 +39,9 @@ export const makeHttpLoginUseCase = () =>
 export const makeHttpListReservationsUseCase = () =>
   new HttpListReservationsUseCase(makeApiUrl("/rooms"), httpClient);
 
+export const makeHttpListAllReservationsUseCase = () =>
+  new HttpListReservationsUseCase(makeApiUrl("/reservations"), httpClient);
+
 export const makeHttpGetReservationUseCase = () =>
   new HttpGetReservationUseCase(makeApiUrl("/rooms"), httpClient);
 

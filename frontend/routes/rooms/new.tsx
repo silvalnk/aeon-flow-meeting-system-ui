@@ -4,13 +4,23 @@ import Alert from "@components/Alert.tsx";
 import { makeHttpCreateRoomUseCase } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { requireAuth, unauthorizedRedirect, redirectTo } from "@infrastructure/auth/session.ts";
 
 interface Data {
   error?: string;
 }
 
 export const handler: Handlers<Data> = {
+  GET(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+    return ctx.render({});
+  },
+
   async POST(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const form = await req.formData();
     const token = getTokenFromRequest(req);
     const result = await makeHttpCreateRoomUseCase().execute({
@@ -21,19 +31,18 @@ export const handler: Handlers<Data> = {
     });
 
     if (isLeft(result)) {
+      const redirect = unauthorizedRedirect(req, result.value.statusCode);
+      if (redirect) return redirect;
       return ctx.render({ error: result.value.message });
     }
 
-    return ctx.render(null, {
-      headers: { Location: `/rooms/${result.value.id}` },
-      status: 302,
-    });
+    return redirectTo(`/rooms/${result.value.id}`);
   },
 };
 
 export default function NewRoomPage({ data }: PageProps<Data>) {
   return (
-    <Layout title="Nova Sala">
+    <Layout title="Nova Sala" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">
         <div class="mb-4">

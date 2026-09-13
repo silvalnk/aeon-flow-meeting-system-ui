@@ -1,27 +1,12 @@
-import { Head } from "$fresh/runtime.ts";
+import Layout from "@components/Layout.tsx";
 
 export default function Error404() {
   return (
-    <>
-      <Head>
-        <title>404 - Page not found</title>
-      </Head>
-      <div class="px-4 py-8 mx-auto bg-[#86efac]">
-        <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
-          <img
-            class="my-6"
-            src="/logo.svg"
-            width="128"
-            height="128"
-            alt="the Fresh logo: a sliced lemon dripping with juice"
-          />
-          <h1 class="text-4xl font-bold">404 - Page not found</h1>
-          <p class="my-4">
-            The page you were looking for doesn't exist.
-          </p>
-          <a href="/" class="underline">Go back home</a>
-        </div>
-      </div>
-    </>
+    <Layout title="Página não encontrada">
+      <p class="text-slate-600 mb-4">
+        O endereço que você abriu não existe neste sistema.
+      </p>
+      <a href="/rooms" class="text-blue-600 hover:underline">Voltar para as salas</a>
+    </Layout>
   );
 }

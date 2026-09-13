@@ -9,6 +9,7 @@ import {
 } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { getTokenFromRequest } from "@infrastructure/auth/token-storage.ts";
+import { requireAuth, unauthorizedRedirect, redirectTo } from "@infrastructure/auth/session.ts";
 import { ReservationEntity, RoomEntity } from "@domain/entities/index.ts";
 
 interface Data {
@@ -19,6 +20,9 @@ interface Data {
 
 export const handler: Handlers<Data> = {
   async GET(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const { id: roomId, reservationId } = ctx.params;
     const token = getTokenFromRequest(req);
 
@@ -27,9 +31,14 @@ export const handler: Handlers<Data> = {
       makeHttpGetReservationUseCase().execute({ roomId, id: reservationId, token }),
     ]);
 
-    if (isLeft(roomResult) || isLeft(reservationResult)) {
+    if (isLeft(roomResult)) {
       return ctx.render({
-        error: isLeft(roomResult) ? roomResult.value.message : reservationResult.value.message,
+        error: roomResult.value.message,
+      });
+    }
+    if (isLeft(reservationResult)) {
+      return ctx.render({
+        error: reservationResult.value.message,
       });
     }
 
@@ -37,6 +46,9 @@ export const handler: Handlers<Data> = {
   },
 
   async POST(req, ctx) {
+    const denied = requireAuth(req);
+    if (denied) return denied;
+
     const { id: roomId, reservationId } = ctx.params;
     const form = await req.formData();
     const token = getTokenFromRequest(req);
@@ -53,6 +65,8 @@ export const handler: Handlers<Data> = {
     });
 
     if (isLeft(result)) {
+      const redirect = unauthorizedRedirect(req, result.value.statusCode);
+      if (redirect) return redirect;
       const reservationResult = await makeHttpGetReservationUseCase().execute({
         roomId,
         id: reservationId,
@@ -66,17 +80,14 @@ export const handler: Handlers<Data> = {
       });
     }
 
-    return ctx.render(null, {
-      headers: { Location: `/rooms/${roomId}/reservations/${reservationId}` },
-      status: 302,
-    });
+    return redirectTo(`/rooms/${roomId}/reservations/${reservationId}`);
   },
 };
 
 export default function EditReservationPage({ data }: PageProps<Data>) {
   const { room, reservation } = data ?? {};
   return (
-    <Layout title="Editar Reserva">
+    <Layout title="Editar Reserva" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       {room && reservation && (
         <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">

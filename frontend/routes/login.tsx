@@ -4,29 +4,49 @@ import Alert from "@components/Alert.tsx";
 import { makeHttpLoginUseCase } from "@factories/usecases/index.ts";
 import { isLeft } from "@shared_domain/either.ts";
 import { buildSetAuthCookie } from "@infrastructure/auth/token-storage.ts";
+import {
+  isAuthenticated,
+  redirectTo,
+  safeRedirectPath,
+} from "@infrastructure/auth/session.ts";
 
 interface Data {
   error?: string;
+  redirect: string;
 }
 
+const credentialsMessage = (message: string): string => {
+  if (message === "Invalid credentials") return "E-mail ou senha inválidos.";
+  return message;
+};
+
 export const handler: Handlers<Data> = {
+  GET(req, ctx) {
+    const url = new URL(req.url);
+    const redirect = safeRedirectPath(url.searchParams.get("redirect"));
+    if (isAuthenticated(req)) {
+      return redirectTo(redirect);
+    }
+    return ctx.render({ redirect });
+  },
+
   async POST(req, ctx) {
     const form = await req.formData();
+    const redirect = safeRedirectPath(String(form.get("redirect") || "/rooms"));
     const result = await makeHttpLoginUseCase().execute({
       email: String(form.get("email")),
       password: String(form.get("password")),
     });
 
     if (isLeft(result)) {
-      return ctx.render({ error: result.value.message });
+      return ctx.render({
+        error: credentialsMessage(result.value.message),
+        redirect,
+      });
     }
 
-    return ctx.render(null, {
-      headers: {
-        Location: "/rooms",
-        "Set-Cookie": buildSetAuthCookie(result.value.token),
-      },
-      status: 302,
+    return redirectTo(redirect, {
+      "Set-Cookie": buildSetAuthCookie(result.value.token),
     });
   },
 };
@@ -36,6 +56,7 @@ export default function LoginPage({ data }: PageProps<Data>) {
     <Layout title="Login">
       <Alert type="error" message={data?.error ?? ""} />
       <form method="POST" class="max-w-md bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+        <input type="hidden" name="redirect" value={data?.redirect ?? "/rooms"} />
         <div class="mb-4">
           <label class="block text-sm font-medium mb-1" for="email">E-mail</label>
           <input

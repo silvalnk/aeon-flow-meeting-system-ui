@@ -3,9 +3,12 @@ import { ComponentChildren } from "preact";
 type LayoutProps = {
   children: ComponentChildren;
   title?: string;
+  authenticated?: boolean;
 };
 
-export default function Layout({ children, title }: LayoutProps) {
+export default function Layout(
+  { children, title, authenticated = false }: LayoutProps,
+) {
   return (
     <div class="min-h-screen bg-slate-50 text-slate-900">
       <header class="bg-white border-b border-slate-200 shadow-sm">
@@ -15,8 +18,13 @@ export default function Layout({ children, title }: LayoutProps) {
           </a>
           <nav class="flex flex-wrap gap-4 text-sm font-medium">
             <a href="/rooms" class="hover:text-blue-600">Salas</a>
-            <a href="/rooms/new" class="hover:text-blue-600">Nova Sala</a>
-            <a href="/login" class="hover:text-blue-600">Login</a>
+            <a href="/reservations" class="hover:text-blue-600">Reservas</a>
+            {authenticated && (
+              <a href="/rooms/new" class="hover:text-blue-600">Nova Sala</a>
+            )}
+            {authenticated
+              ? <a href="/logout" class="hover:text-blue-600">Sair</a>
+              : <a href="/login" class="hover:text-blue-600">Login</a>}
           </nav>
         </div>
       </header>

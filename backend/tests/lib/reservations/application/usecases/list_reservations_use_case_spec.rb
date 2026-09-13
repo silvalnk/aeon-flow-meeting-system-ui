@@ -33,5 +33,15 @@ RSpec.describe Reservations::Application::UseCases::ListReservationsUseCase do
         hash_including(status: 'confirmed', search: 'João')
       )
     end
+
+    it 'lists reservations from every room when room_id is blank' do
+      reservations = [instance_double(Reservations::Domain::Entities::Reservation)]
+      allow(reservation_repository).to receive(:find_all).with(nil, {}).and_return(reservations)
+
+      result = use_case.call({})
+
+      expect(result).to be_success
+      expect(result.value!).to eq(reservations)
+    end
   end
 end

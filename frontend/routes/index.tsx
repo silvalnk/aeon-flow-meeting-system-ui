@@ -1,11 +1,9 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
+import { redirectTo } from "@infrastructure/auth/session.ts";
 
 export const handler: Handlers = {
-  GET(_req, ctx) {
-    return ctx.render(null, {
-      headers: { Location: "/rooms" },
-      status: 302,
-    });
+  GET() {
+    return redirectTo("/rooms");
   },
 };
 

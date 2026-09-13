@@ -1,12 +1,13 @@
 import { Either, UseCase } from "../../shared_domain/index.ts";
+import { AppError } from "../../shared_domain/app-error.ts";
 import { RoomEntity } from "../entities/index.ts";
 
 export type ListRoomsRequest = { search?: string; token?: string | null };
-export type ListRoomsResponse = Either<{ message: string }, RoomEntity[]>;
+export type ListRoomsResponse = Either<AppError, RoomEntity[]>;
 export interface ListRoomsUseCase extends UseCase<ListRoomsRequest, ListRoomsResponse> {}
 
 export type GetRoomRequest = { id: string; token?: string | null };
-export type GetRoomResponse = Either<{ message: string }, RoomEntity>;
+export type GetRoomResponse = Either<AppError, RoomEntity>;
 export interface GetRoomUseCase extends UseCase<GetRoomRequest, GetRoomResponse> {}
 
 export type CreateRoomRequest = {
@@ -15,7 +16,7 @@ export type CreateRoomRequest = {
   location: string;
   token?: string | null;
 };
-export type CreateRoomResponse = Either<{ message: string }, RoomEntity>;
+export type CreateRoomResponse = Either<AppError, RoomEntity>;
 export interface CreateRoomUseCase extends UseCase<CreateRoomRequest, CreateRoomResponse> {}
 
 export type UpdateRoomRequest = {
@@ -25,9 +26,9 @@ export type UpdateRoomRequest = {
   location: string;
   token?: string | null;
 };
-export type UpdateRoomResponse = Either<{ message: string }, RoomEntity>;
+export type UpdateRoomResponse = Either<AppError, RoomEntity>;
 export interface UpdateRoomUseCase extends UseCase<UpdateRoomRequest, UpdateRoomResponse> {}
 
 export type DeleteRoomRequest = { id: string; token?: string | null };
-export type DeleteRoomResponse = Either<{ message: string }, void>;
+export type DeleteRoomResponse = Either<AppError, void>;
 export interface DeleteRoomUseCase extends UseCase<DeleteRoomRequest, DeleteRoomResponse> {}

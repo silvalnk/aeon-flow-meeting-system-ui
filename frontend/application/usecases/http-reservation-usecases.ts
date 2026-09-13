@@ -46,9 +46,12 @@ export class HttpListReservationsUseCase implements ListReservationsUseCase {
     if (params.end_time) query.set("end_time", params.end_time);
     if (params.search) query.set("search", params.search);
     const qs = query.toString();
+    const url = params.roomId
+      ? `${this.baseUrl}/${params.roomId}/reservations${qs ? `?${qs}` : ""}`
+      : `${this.baseUrl}${qs ? `?${qs}` : ""}`;
 
     const response = await this.httpClient.request({
-      url: `${this.baseUrl}/${params.roomId}/reservations${qs ? `?${qs}` : ""}`,
+      url,
       method: "get",
       headers: buildAuthHeaders(params.token ?? null),
     });

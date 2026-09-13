@@ -2,9 +2,10 @@ import { RoomEntity } from "../domain/entities/index.ts";
 
 type RoomCardProps = {
   room: RoomEntity;
+  authenticated?: boolean;
 };
 
-export default function RoomCard({ room }: RoomCardProps) {
+export default function RoomCard({ room, authenticated = false }: RoomCardProps) {
   return (
     <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 flex flex-col gap-3">
       <div>
@@ -27,12 +28,14 @@ export default function RoomCard({ room }: RoomCardProps) {
         >
           Reservas
         </a>
-        <a
-          href={`/rooms/${room.id}/edit`}
-          class="px-3 py-1.5 text-sm border border-slate-300 rounded hover:bg-slate-50"
-        >
-          Editar
-        </a>
+        {authenticated && (
+          <a
+            href={`/rooms/${room.id}/edit`}
+            class="px-3 py-1.5 text-sm border border-slate-300 rounded hover:bg-slate-50"
+          >
+            Editar
+          </a>
+        )}
       </div>
     </div>
   );

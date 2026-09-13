@@ -4,10 +4,10 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $api_joke from "./routes/api/joke.ts";
-import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
+import * as $logout from "./routes/logout.tsx";
+import * as $reservations_index from "./routes/reservations/index.tsx";
 import * as $rooms_id_edit from "./routes/rooms/[id]/edit.tsx";
 import * as $rooms_id_index from "./routes/rooms/[id]/index.tsx";
 import * as $rooms_id_reservations_reservationId_edit from "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx";
@@ -23,10 +23,10 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/api/joke.ts": $api_joke,
-    "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
+    "./routes/logout.tsx": $logout,
+    "./routes/reservations/index.tsx": $reservations_index,
     "./routes/rooms/[id]/edit.tsx": $rooms_id_edit,
     "./routes/rooms/[id]/index.tsx": $rooms_id_index,
     "./routes/rooms/[id]/reservations/[reservationId]/edit.tsx":

@@ -33,4 +33,33 @@ if db[:rooms].count.zero?
   end
 end
 
+if db[:reservations].count.zero? && db[:rooms].any?
+  rooms = db[:rooms].all
+  first_room = rooms.first
+  second_room = rooms[1] || first_room
+  base = Time.now + (3 * 24 * 60 * 60)
+  start_one = Time.new(base.year, base.month, base.day, 10, 0, 0)
+  start_two = start_one + (24 * 60 * 60)
+
+  db[:reservations].insert(
+    id: SecureRandom.uuid,
+    room_id: first_room[:id],
+    start_time: start_one,
+    end_time: start_one + 3600,
+    description: 'Reunião de planejamento',
+    responsible: 'Administrador',
+    status: 'confirmed'
+  )
+  db[:reservations].insert(
+    id: SecureRandom.uuid,
+    room_id: second_room[:id],
+    start_time: start_two,
+    end_time: start_two + (2 * 3600),
+    description: 'Alinhamento de squad',
+    responsible: 'Ana Souza',
+    status: 'pending'
+  )
+  puts 'Sample reservations created'
+end
+
 puts 'Seeding completed.'
