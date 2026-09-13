@@ -195,7 +195,7 @@ module App
             API REST para gestão de salas de reunião e reservas.
 
             **Autenticação:** operações de escrita (POST, PUT, DELETE) exigem header `Authorization: Bearer <token>`.
-            Obtenha o token via `POST /api/v1/auth/login`. Consultas GET de salas e reservas são públicas.
+            Obtenha o token via `POST /api/v1/auth/login`. Consultas GET de salas e reservas (incluindo `GET /api/v1/reservations`) são públicas.
 
             **Regras de negócio:**
             - Uma sala não pode ter reservas sobrepostas (exceto canceladas).
@@ -218,7 +218,7 @@ module App
 
         tag name: 'Auth', description: 'Autenticação JWT'
         tag name: 'Rooms', description: 'Gestão de salas de reunião'
-        tag name: 'Reservations', description: 'Gestão de reservas por sala'
+        tag name: 'Reservations', description: 'Agenda global e reservas por sala'
       end
 
       # ── Auth ──────────────────────────────────────────────────────────────────
@@ -418,7 +418,7 @@ module App
       swagger_path '/api/v1/reservations' do
         operation :get do
           key :summary, 'Listar todas as reservas'
-          key :description, 'Retorna reservas de todas as salas. Use os filtros opcionais para refinar a busca.'
+          key :description, 'Rota pública. Retorna reservas de todas as salas. Use os filtros opcionais para refinar a busca.'
           key :operationId, 'listAllReservations'
           key :tags, ['Reservations']
 

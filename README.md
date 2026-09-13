@@ -1,12 +1,12 @@
 # Aeon Flow — Gestão de Reservas de Salas de Reunião
 
-Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas de reunião. O backend expõe uma API REST em Ruby (Hanami) e o frontend é uma SPA server-rendered em Deno/Fresh.
+Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas de reunião. O backend expõe uma API REST em Ruby (Hanami) e o frontend é SSR em Deno/Fresh.
 
 ## Stack
 
 | Camada | Tecnologia |
 |--------|------------|
-| Backend | Ruby 3.3+, Hanami::API, ROM-SQL, SQLite |
+| Backend | Ruby 3.2+, Hanami::API, ROM-SQL, SQLite |
 | Frontend | Deno, Fresh, Preact, Tailwind CSS |
 | Auth | JWT (HS256) + BCrypt |
 | Docs | Swagger OpenAPI 3.0 em `/docs` |
@@ -15,7 +15,7 @@ Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas
 
 ### Pré-requisitos
 
-- Ruby **3.3.0** (recomendado via `asdf`; evite Ruby 3.4 dev — incompatível com `sqlite3`)
+- Ruby **3.2.10+** (`.tool-versions`; evite Ruby 3.4 — incompatível com `sqlite3`)
 - Bundler
 - Deno
 
@@ -23,7 +23,7 @@ Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas
 
 ```bash
 cd backend
-asdf local ruby 3.3.0   # opcional, mas recomendado
+asdf local ruby 3.2.10  # opcional, mas recomendado
 bundle install
 ENVIRONMENT=development bundle exec rake db:migrate
 ENVIRONMENT=development bundle exec rake db:seed
@@ -34,7 +34,8 @@ bin/dev
 - Swagger UI: `http://localhost:9292/docs`
 - OpenAPI JSON: `http://localhost:9292/api-docs/swagger.json`
 
-**Credenciais padrão (seed):** `admin@aeonflow.com` / `admin123`
+**Credenciais padrão (seed):** `admin@aeonflow.com` / `admin123`  
+O seed também cria salas de exemplo e, se o banco estiver vazio, reservas futuras de demonstração.
 
 ### Frontend
 
@@ -43,13 +44,13 @@ cd frontend
 API_URL=http://localhost:9292/api/v1 deno task start
 ```
 
-Acesse `http://localhost:8000`. Faça login em `/login` para operações de escrita.
+Acesse `http://localhost:8000`. Leitura (salas e reservas) é pública. Login em `/login` para criar, editar, excluir ou cancelar; `/logout` encerra a sessão.
 
 ## Autenticação
 
 | Tipo de rota | Autenticação |
 |--------------|--------------|
-| `GET /api/v1/rooms` e sub-recursos de leitura | Pública |
+| `GET /api/v1/rooms`, `GET /api/v1/reservations` e sub-recursos de leitura | Pública |
 | `POST /api/v1/auth/login` | Pública |
 | `POST`, `PUT`, `DELETE` | Requer `Authorization: Bearer <token>` |
 
@@ -90,7 +91,8 @@ Base URL: `/api/v1`
 
 | Método | Rota | Auth | Descrição |
 |--------|------|------|-----------|
-| `GET` | `/rooms/{room_id}/reservations` | — | Lista reservas. Query: `status`, `start_time`, `end_time`, `search` |
+| `GET` | `/reservations` | — | Agenda global. Query: `status`, `start_time`, `end_time`, `search` |
+| `GET` | `/rooms/{room_id}/reservations` | — | Lista reservas da sala. Query: `status`, `start_time`, `end_time`, `search` |
 | `POST` | `/rooms/{room_id}/reservations` | JWT | Cria reserva |
 | `GET` | `/rooms/{room_id}/reservations/{id}` | — | Detalhes de uma reserva |
 | `PUT` | `/rooms/{room_id}/reservations/{id}` | JWT | Atualiza reserva |
@@ -181,13 +183,13 @@ src/lib/
 | `/logout` | Encerra a sessão |
 | `/reservations` | Agenda global de reservas |
 | `/rooms` | Listagem e busca de salas |
-| `/rooms/new` | Criar sala |
-| `/rooms/[id]` | Detalhes e exclusão |
-| `/rooms/[id]/edit` | Editar sala |
+| `/rooms/new` | Criar sala (requer login) |
+| `/rooms/[id]` | Detalhes (exclusão requer login) |
+| `/rooms/[id]/edit` | Editar sala (requer login) |
 | `/rooms/[id]/reservations` | Listagem com filtros |
-| `/rooms/[id]/reservations/new` | Nova reserva |
-| `/rooms/[id]/reservations/[reservationId]` | Detalhes e cancelamento |
-| `/rooms/[id]/reservations/[reservationId]/edit` | Editar reserva |
+| `/rooms/[id]/reservations/new` | Nova reserva (requer login) |
+| `/rooms/[id]/reservations/[reservationId]` | Detalhes (cancelamento requer login) |
+| `/rooms/[id]/reservations/[reservationId]/edit` | Editar reserva (requer login) |
 
 ## Requisitos Funcionais
 
@@ -201,6 +203,8 @@ src/lib/
 | 6 | Visualização de reservas | Implementado |
 | 7 | Cancelamento de reservas | Implementado |
 | 8 | Filtragem e busca | Implementado |
+| 9 | Login / logout na UI | Implementado |
+| 10 | Agenda global de reservas | Implementado |
 
 ## Requisitos Não Funcionais
 
