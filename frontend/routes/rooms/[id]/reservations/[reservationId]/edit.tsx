@@ -87,12 +87,12 @@ export const handler: Handlers<Data> = {
 export default function EditReservationPage({ data }: PageProps<Data>) {
   const { room, reservation } = data ?? {};
   return (
-    <Layout title="Editar Reserva" authenticated>
+    <Layout title="Edit reservation" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       {room && reservation && (
         <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="responsible">Responsável</label>
+            <label class="block text-sm font-medium mb-1" for="responsible">Organizer</label>
             <input
               id="responsible"
               name="responsible"
@@ -103,7 +103,7 @@ export default function EditReservationPage({ data }: PageProps<Data>) {
             />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="start_time">Início</label>
+            <label class="block text-sm font-medium mb-1" for="start_time">Start</label>
             <input
               id="start_time"
               name="start_time"
@@ -114,7 +114,7 @@ export default function EditReservationPage({ data }: PageProps<Data>) {
             />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="end_time">Fim</label>
+            <label class="block text-sm font-medium mb-1" for="end_time">End</label>
             <input
               id="end_time"
               name="end_time"
@@ -125,7 +125,7 @@ export default function EditReservationPage({ data }: PageProps<Data>) {
             />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="description">Descrição</label>
+            <label class="block text-sm font-medium mb-1" for="description">Description</label>
             <textarea id="description" name="description" rows={3} class="w-full border rounded px-3 py-2">
               {reservation.description ?? ""}
             </textarea>
@@ -133,18 +133,18 @@ export default function EditReservationPage({ data }: PageProps<Data>) {
           <div class="mb-6">
             <label class="block text-sm font-medium mb-1" for="status">Status</label>
             <select id="status" name="status" class="w-full border rounded px-3 py-2">
-              <option value="pending" selected={reservation.status === "pending"}>Pendente</option>
-              <option value="confirmed" selected={reservation.status === "confirmed"}>Confirmada</option>
-              <option value="cancelled" selected={reservation.status === "cancelled"}>Cancelada</option>
+              <option value="pending" selected={reservation.status === "pending"}>Pending</option>
+              <option value="confirmed" selected={reservation.status === "confirmed"}>Confirmed</option>
+              <option value="cancelled" selected={reservation.status === "cancelled"}>Cancelled</option>
             </select>
           </div>
           <div class="flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Salvar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
             <a
               href={`/rooms/${room.id}/reservations/${reservation.id}`}
               class="px-4 py-2 border rounded hover:bg-slate-50"
             >
-              Cancelar
+              Cancel
             </a>
           </div>
         </form>

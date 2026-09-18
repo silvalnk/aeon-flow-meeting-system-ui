@@ -11,9 +11,9 @@ const colors: Record<ReservationEntity["status"], string> = {
 };
 
 const labels: Record<ReservationEntity["status"], string> = {
-  confirmed: "Confirmada",
-  pending: "Pendente",
-  cancelled: "Cancelada",
+  confirmed: "Confirmed",
+  pending: "Pending",
+  cancelled: "Cancelled",
 };
 
 export default function StatusBadge({ status }: StatusBadgeProps) {

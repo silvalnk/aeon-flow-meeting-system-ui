@@ -13,27 +13,27 @@ export default function RoomCard({ room, authenticated = false }: RoomCardProps)
         <p class="text-sm text-slate-600">{room.location}</p>
       </div>
       <p class="text-sm">
-        <span class="font-medium">Capacidade:</span> {room.capacity} pessoas
+        <span class="font-medium">Capacity:</span> {room.capacity} people
       </p>
       <div class="flex flex-wrap gap-2 mt-auto">
         <a
           href={`/rooms/${room.id}`}
           class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Detalhes
+          Details
         </a>
         <a
           href={`/rooms/${room.id}/reservations`}
           class="px-3 py-1.5 text-sm bg-slate-100 text-slate-800 rounded hover:bg-slate-200"
         >
-          Reservas
+          Reservations
         </a>
         {authenticated && (
           <a
             href={`/rooms/${room.id}/edit`}
             class="px-3 py-1.5 text-sm border border-slate-300 rounded hover:bg-slate-50"
           >
-            Editar
+            Edit
           </a>
         )}
       </div>

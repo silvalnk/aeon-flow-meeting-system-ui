@@ -60,25 +60,25 @@ export const handler: Handlers<Data> = {
 export default function EditRoomPage({ data }: PageProps<Data>) {
   const room = data?.room;
   return (
-    <Layout title="Editar Sala" authenticated>
+    <Layout title="Edit room" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="name">Nome</label>
+            <label class="block text-sm font-medium mb-1" for="name">Name</label>
             <input id="name" name="name" required maxLength={100} value={room.name} class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="capacity">Capacidade</label>
+            <label class="block text-sm font-medium mb-1" for="capacity">Capacity</label>
             <input id="capacity" name="capacity" type="number" min="1" required value={room.capacity} class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-6">
-            <label class="block text-sm font-medium mb-1" for="location">Localização</label>
+            <label class="block text-sm font-medium mb-1" for="location">Location</label>
             <input id="location" name="location" required value={room.location} class="w-full border rounded px-3 py-2" />
           </div>
           <div class="flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Salvar</button>
-            <a href={`/rooms/${room.id}`} class="px-4 py-2 border rounded hover:bg-slate-50">Cancelar</a>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+            <a href={`/rooms/${room.id}`} class="px-4 py-2 border rounded hover:bg-slate-50">Cancel</a>
           </div>
         </form>
       )}

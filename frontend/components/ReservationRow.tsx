@@ -26,14 +26,14 @@ export default function ReservationRow(
             href={`/rooms/${roomId}/reservations/${reservation.id}`}
             class="text-blue-600 hover:underline text-sm"
           >
-            Ver
+            View
           </a>
           {canEdit && reservation.status !== "cancelled" && (
             <a
               href={`/rooms/${roomId}/reservations/${reservation.id}/edit`}
               class="text-slate-600 hover:underline text-sm"
             >
-              Editar
+              Edit
             </a>
           )}
         </div>

@@ -19,7 +19,7 @@ export const handleHttpResponse = <T>(
   let message = body.error ?? body.message ??
     (Array.isArray(body.errors) ? body.errors.join(", ") : "Request failed");
   if (response.statusCode === 401 && String(message) === "Unauthorized") {
-    message = "Sessão expirada ou ausente. Faça login para continuar.";
+    message = "Session expired or missing. Log in to continue.";
   }
 
   return Left({

@@ -16,7 +16,7 @@ interface Data {
 }
 
 const credentialsMessage = (message: string): string => {
-  if (message === "Invalid credentials") return "E-mail ou senha inválidos.";
+  if (message === "Invalid credentials") return "Invalid email or password.";
   return message;
 };
 
@@ -58,7 +58,7 @@ export default function LoginPage({ data }: PageProps<Data>) {
       <form method="POST" class="max-w-md bg-white p-6 rounded-lg shadow-sm border border-slate-200">
         <input type="hidden" name="redirect" value={data?.redirect ?? "/rooms"} />
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-1" for="email">E-mail</label>
+          <label class="block text-sm font-medium mb-1" for="email">Email</label>
           <input
             id="email"
             name="email"
@@ -69,7 +69,7 @@ export default function LoginPage({ data }: PageProps<Data>) {
           />
         </div>
         <div class="mb-6">
-          <label class="block text-sm font-medium mb-1" for="password">Senha</label>
+          <label class="block text-sm font-medium mb-1" for="password">Password</label>
           <input
             id="password"
             name="password"
@@ -79,7 +79,7 @@ export default function LoginPage({ data }: PageProps<Data>) {
           />
         </div>
         <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Entrar
+          Log in
         </button>
         <p class="text-xs text-slate-500 mt-4">Demo: admin@aeonflow.com / admin123</p>
       </form>

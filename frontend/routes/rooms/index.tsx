@@ -34,27 +34,27 @@ export const handler: Handlers<Data> = {
 export default function RoomsPage({ data }: PageProps<Data>) {
   const authenticated = data?.authenticated ?? false;
   return (
-    <Layout title="Salas de Reunião" authenticated={authenticated}>
+    <Layout title="Meeting rooms" authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       <form method="GET" class="mb-6 flex flex-col sm:flex-row gap-2">
         <input
           type="search"
           name="search"
           value={data?.search ?? ""}
-          placeholder="Buscar por nome..."
+          placeholder="Search by name..."
           class="flex-1 border border-slate-300 rounded px-3 py-2"
         />
         <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded hover:bg-slate-900">
-          Buscar
+          Search
         </button>
         {authenticated && (
           <a href="/rooms/new" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center">
-            Nova Sala
+            New room
           </a>
         )}
       </form>
       {data?.rooms.length === 0
-        ? <p class="text-slate-600">Nenhuma sala encontrada.</p>
+        ? <p class="text-slate-600">No rooms found.</p>
         : (
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data?.rooms.map((room) => (

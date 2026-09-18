@@ -39,7 +39,7 @@ export const handler: Handlers<Data> = {
     const { id } = ctx.params;
     const form = await req.formData();
     if (form.get("_method") !== "DELETE") {
-      return ctx.render({ error: "Método inválido", authenticated: true });
+      return ctx.render({ error: "Invalid method", authenticated: true });
     }
 
     const token = getTokenFromRequest(req);
@@ -64,23 +64,23 @@ export default function RoomDetailPage({ data }: PageProps<Data>) {
   const room = data?.room;
   const authenticated = data?.authenticated ?? false;
   return (
-    <Layout title={room?.name ?? "Sala"} authenticated={authenticated}>
+    <Layout title={room?.name ?? "Room"} authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 max-w-2xl">
           <p class="text-slate-600 mb-2">{room.location}</p>
-          <p class="mb-4"><span class="font-medium">Capacidade:</span> {room.capacity}</p>
+          <p class="mb-4"><span class="font-medium">Capacity:</span> {room.capacity}</p>
           <div class="flex flex-wrap gap-2">
             <a href={`/rooms/${room.id}/reservations`} class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              Ver Reservas
+              View reservations
             </a>
             {authenticated && (
               <>
-                <a href={`/rooms/${room.id}/edit`} class="px-4 py-2 border rounded hover:bg-slate-50">Editar</a>
+                <a href={`/rooms/${room.id}/edit`} class="px-4 py-2 border rounded hover:bg-slate-50">Edit</a>
                 <form method="POST" class="inline">
                   <input type="hidden" name="_method" value="DELETE" />
                   <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                    Excluir
+                    Delete
                   </button>
                 </form>
               </>

@@ -58,37 +58,37 @@ export const handler: Handlers<Data> = {
 export default function NewReservationPage({ data }: PageProps<Data>) {
   const room = data?.room;
   return (
-    <Layout title="Nova Reserva" authenticated>
+    <Layout title="New reservation" authenticated>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <form method="POST" class="max-w-lg bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-          <p class="text-sm text-slate-600 mb-4">Sala: <strong>{room.name}</strong></p>
+          <p class="text-sm text-slate-600 mb-4">Room: <strong>{room.name}</strong></p>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="responsible">Responsável</label>
+            <label class="block text-sm font-medium mb-1" for="responsible">Organizer</label>
             <input id="responsible" name="responsible" required maxLength={100} class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="start_time">Início</label>
+            <label class="block text-sm font-medium mb-1" for="start_time">Start</label>
             <input id="start_time" name="start_time" type="datetime-local" required class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="end_time">Fim</label>
+            <label class="block text-sm font-medium mb-1" for="end_time">End</label>
             <input id="end_time" name="end_time" type="datetime-local" required class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="description">Descrição</label>
+            <label class="block text-sm font-medium mb-1" for="description">Description</label>
             <textarea id="description" name="description" rows={3} class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-6">
             <label class="block text-sm font-medium mb-1" for="status">Status</label>
             <select id="status" name="status" class="w-full border rounded px-3 py-2">
-              <option value="pending">Pendente</option>
-              <option value="confirmed">Confirmada</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
             </select>
           </div>
           <div class="flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Criar</button>
-            <a href={`/rooms/${room.id}/reservations`} class="px-4 py-2 border rounded hover:bg-slate-50">Cancelar</a>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
+            <a href={`/rooms/${room.id}/reservations`} class="px-4 py-2 border rounded hover:bg-slate-50">Cancel</a>
           </div>
         </form>
       )}

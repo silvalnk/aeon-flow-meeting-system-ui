@@ -91,23 +91,23 @@ export const handler: Handlers<Data> = {
       return redirectTo(`/rooms/${roomId}/reservations`);
     }
 
-    return ctx.render({ error: "Método inválido", authenticated: true });
+    return ctx.render({ error: "Invalid method", authenticated: true });
   },
 };
 
 export default function ReservationDetailPage({ data }: PageProps<Data>) {
   const { room, reservation, authenticated = false } = data ?? {};
   return (
-    <Layout title="Detalhes da Reserva" authenticated={authenticated}>
+    <Layout title="Reservation details" authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       {room && reservation && (
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 max-w-2xl">
           <div class="mb-4"><StatusBadge status={reservation.status} /></div>
-          <p class="mb-2"><span class="font-medium">Sala:</span> {room.name}</p>
-          <p class="mb-2"><span class="font-medium">Responsável:</span> {reservation.responsible}</p>
-          <p class="mb-2"><span class="font-medium">Início:</span> {formatDateTime(reservation.start_time)}</p>
-          <p class="mb-2"><span class="font-medium">Fim:</span> {formatDateTime(reservation.end_time)}</p>
-          <p class="mb-4"><span class="font-medium">Descrição:</span> {reservation.description || "—"}</p>
+          <p class="mb-2"><span class="font-medium">Room:</span> {room.name}</p>
+          <p class="mb-2"><span class="font-medium">Organizer:</span> {reservation.responsible}</p>
+          <p class="mb-2"><span class="font-medium">Start:</span> {formatDateTime(reservation.start_time)}</p>
+          <p class="mb-2"><span class="font-medium">End:</span> {formatDateTime(reservation.end_time)}</p>
+          <p class="mb-4"><span class="font-medium">Description:</span> {reservation.description || "—"}</p>
           <div class="flex flex-wrap gap-2">
             {authenticated && reservation.status !== "cancelled" && (
               <>
@@ -115,18 +115,18 @@ export default function ReservationDetailPage({ data }: PageProps<Data>) {
                   href={`/rooms/${room.id}/reservations/${reservation.id}/edit`}
                   class="px-4 py-2 border rounded hover:bg-slate-50"
                 >
-                  Editar
+                  Edit
                 </a>
                 <form method="POST" class="inline">
                   <input type="hidden" name="_method" value="DELETE" />
                   <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                    Cancelar Reserva
+                    Cancel reservation
                   </button>
                 </form>
               </>
             )}
             <a href={`/rooms/${room.id}/reservations`} class="px-4 py-2 text-blue-600 hover:underline">
-              Voltar
+              Back
             </a>
           </div>
         </div>

@@ -17,14 +17,14 @@ export default function Layout(
             Aeon Flow
           </a>
           <nav class="flex flex-wrap gap-4 text-sm font-medium">
-            <a href="/rooms" class="hover:text-blue-600">Salas</a>
-            <a href="/reservations" class="hover:text-blue-600">Reservas</a>
+            <a href="/rooms" class="hover:text-blue-600">Rooms</a>
+            <a href="/reservations" class="hover:text-blue-600">Reservations</a>
             {authenticated && (
-              <a href="/rooms/new" class="hover:text-blue-600">Nova Sala</a>
+              <a href="/rooms/new" class="hover:text-blue-600">New room</a>
             )}
             {authenticated
-              ? <a href="/logout" class="hover:text-blue-600">Sair</a>
-              : <a href="/login" class="hover:text-blue-600">Login</a>}
+              ? <a href="/logout" class="hover:text-blue-600">Log out</a>
+              : <a href="/login" class="hover:text-blue-600">Log in</a>}
           </nav>
         </div>
       </header>

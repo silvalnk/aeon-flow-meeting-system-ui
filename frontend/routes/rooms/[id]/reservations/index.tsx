@@ -68,51 +68,51 @@ export default function RoomReservationsPage({ data }: PageProps<Data>) {
   const room = data?.room;
   const authenticated = data?.authenticated ?? false;
   return (
-    <Layout title={room ? `Reservas — ${room.name}` : "Reservas"} authenticated={authenticated}>
+    <Layout title={room ? `Reservations — ${room.name}` : "Reservations"} authenticated={authenticated}>
       <Alert type="error" message={data?.error ?? ""} />
       {room && (
         <>
           <div class="mb-4 flex flex-wrap gap-2">
             {authenticated && (
               <a href={`/rooms/${room.id}/reservations/new`} class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                Nova Reserva
+                New reservation
               </a>
             )}
-            <a href={`/rooms/${room.id}`} class="px-4 py-2 border rounded hover:bg-slate-50">Voltar à Sala</a>
+            <a href={`/rooms/${room.id}`} class="px-4 py-2 border rounded hover:bg-slate-50">Back to room</a>
           </div>
           <form method="GET" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-2">
             <input
               type="search"
               name="search"
               value={data?.filters.search ?? ""}
-              placeholder="Buscar responsável..."
+              placeholder="Search by organizer..."
               class="border rounded px-3 py-2"
             />
             <select name="status" class="border rounded px-3 py-2">
-              <option value="">Todos os status</option>
-              <option value="confirmed" selected={data?.filters.status === "confirmed"}>Confirmada</option>
-              <option value="pending" selected={data?.filters.status === "pending"}>Pendente</option>
-              <option value="cancelled" selected={data?.filters.status === "cancelled"}>Cancelada</option>
+              <option value="">All statuses</option>
+              <option value="confirmed" selected={data?.filters.status === "confirmed"}>Confirmed</option>
+              <option value="pending" selected={data?.filters.status === "pending"}>Pending</option>
+              <option value="cancelled" selected={data?.filters.status === "cancelled"}>Cancelled</option>
             </select>
-            <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded hover:bg-slate-900">Filtrar</button>
+            <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded hover:bg-slate-900">Filter</button>
           </form>
           <div class="overflow-x-auto bg-white rounded-lg shadow-sm border border-slate-200">
             <table class="w-full text-left">
               <thead class="bg-slate-50 text-sm">
                 <tr>
-                  <th class="px-4 py-3">Responsável</th>
-                  <th class="px-4 py-3">Início</th>
-                  <th class="px-4 py-3">Fim</th>
+                  <th class="px-4 py-3">Organizer</th>
+                  <th class="px-4 py-3">Start</th>
+                  <th class="px-4 py-3">End</th>
                   <th class="px-4 py-3">Status</th>
-                  <th class="px-4 py-3">Descrição</th>
-                  <th class="px-4 py-3">Ações</th>
+                  <th class="px-4 py-3">Description</th>
+                  <th class="px-4 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data?.reservations.length === 0
                   ? (
                     <tr>
-                      <td colSpan={6} class="px-4 py-6 text-center text-slate-500">Nenhuma reserva encontrada.</td>
+                      <td colSpan={6} class="px-4 py-6 text-center text-slate-500">No reservations found.</td>
                     </tr>
                   )
                   : data?.reservations.map((r) => (
