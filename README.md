@@ -5,9 +5,6 @@
 > Auth **JWT**, agenda sem sobreposição, Clean Architecture / DDD.  
 > A **UI** está em inglês; este README e o Swagger ficam em português.
 
-Repositório: [silvalnk/aeon-flow-meeting-system-ui](https://github.com/silvalnk/aeon-flow-meeting-system-ui)  
-Pasta local: `aeon_flow/` · Marca: **Aeon Flow**
-
 ![Meeting rooms no Aeon Flow](docs/images/rooms.jpg)
 
 | | |
