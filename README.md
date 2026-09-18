@@ -2,6 +2,10 @@
 
 Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas de reunião. O backend expõe uma API REST em Ruby (Hanami) e o frontend é SSR em Deno/Fresh.
 
+A **interface da aplicação** está em inglês. Este README e o Swagger permanecem em português.
+
+![Meeting rooms no Aeon Flow](docs/images/rooms.jpg)
+
 ## Stack
 
 | Camada | Tecnologia |
