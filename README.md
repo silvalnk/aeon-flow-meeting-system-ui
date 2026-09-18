@@ -1,19 +1,22 @@
-# Aeon Flow — Gestão de Reservas de Salas de Reunião
+# Aeon Flow
 
-Sistema full-stack para criar, consultar, atualizar e cancelar reservas de salas de reunião. O backend expõe uma API REST em Ruby (Hanami) e o frontend é SSR em Deno/Fresh.
+> Sistema de reservas de salas de reunião em **Ruby + Deno**.  
+> Backend REST em [Hanami](https://hanamirb.org/) · frontend SSR em [Fresh](https://fresh.deno.dev/).  
+> Auth **JWT**, agenda sem sobreposição, Clean Architecture / DDD.  
+> A **UI** está em inglês; este README e o Swagger ficam em português.
 
-A **interface da aplicação** está em inglês. Este README e o Swagger permanecem em português.
+Repositório: [silvalnk/aeon-flow-meeting-system-ui](https://github.com/silvalnk/aeon-flow-meeting-system-ui)  
+Pasta local: `aeon_flow/` · Marca: **Aeon Flow**
 
 ![Meeting rooms no Aeon Flow](docs/images/rooms.jpg)
 
-## Stack
-
-| Camada | Tecnologia |
-|--------|------------|
+| | |
+|--|--|
 | Backend | Ruby 3.2+, Hanami::API, ROM-SQL, SQLite |
 | Frontend | Deno, Fresh, Preact, Tailwind CSS |
 | Auth | JWT (HS256) + BCrypt |
 | Docs | Swagger OpenAPI 3.0 em `/docs` |
+| Fora de escopo | Pagamentos, calendário externo, multi-tenant |
 
 ## Como Executar
 
